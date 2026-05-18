@@ -1,12 +1,11 @@
 package com.example.proyecto_final.viewmodel
 
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.proyecto_final.MODELS.Maintenance
+import com.example.proyecto_final.MODELS.Document
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,33 +13,26 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-data class MaintenanceUiState(
+data class DocumentsUiState(
     val hasMotorcycle: Boolean = false,
     val isLoading: Boolean = true,
     val isSaving: Boolean = false,
-    val maintenanceList: List<Maintenance> = emptyList(),
+    val documents: List<Document> = emptyList(),
     val motorcycleId: String? = null
 )
 
-class MaintenanceViewModel : ViewModel() {
+class DocumentsViewModel : ViewModel() {
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
 
-    var selectedTab by mutableIntStateOf(0)
-        private set
-
-    private val _uiState = MutableStateFlow(MaintenanceUiState())
-    val uiState: StateFlow<MaintenanceUiState> = _uiState
+    private val _uiState = MutableStateFlow(DocumentsUiState())
+    val uiState: StateFlow<DocumentsUiState> = _uiState
 
     init {
-        checkMotorcycleAndLoadData()
+        checkMotorcycleAndLoadDocuments()
     }
 
-    fun onTabSelected(index: Int) {
-        selectedTab = index
-    }
-
-    private fun checkMotorcycleAndLoadData() {
+    fun checkMotorcycleAndLoadDocuments() {
         val userId = auth.currentUser?.uid ?: return
 
         viewModelScope.launch {
@@ -58,7 +50,7 @@ class MaintenanceViewModel : ViewModel() {
                         hasMotorcycle = true,
                         motorcycleId = motoId
                     )
-                    loadMaintenance(motoId)
+                    loadDocuments(motoId)
                 } else {
                     _uiState.value = _uiState.value.copy(
                         hasMotorcycle = false,
@@ -71,17 +63,17 @@ class MaintenanceViewModel : ViewModel() {
         }
     }
 
-    private fun loadMaintenance(motoId: String) {
+    private fun loadDocuments(motoId: String) {
         viewModelScope.launch {
             try {
-                val snapshot = db.collection("maintenance")
+                val snapshot = db.collection("documents")
                     .whereEqualTo("motorcycleId", motoId)
                     .get()
                     .await()
 
-                val list = snapshot.toObjects(Maintenance::class.java)
+                val list = snapshot.toObjects(Document::class.java)
                 _uiState.value = _uiState.value.copy(
-                    maintenanceList = list,
+                    documents = list,
                     isLoading = false
                 )
             } catch (e: Exception) {
@@ -90,27 +82,24 @@ class MaintenanceViewModel : ViewModel() {
         }
     }
 
-    fun addMaintenance(description: String, type: String, value: String, isCompleted: Boolean = false) {
+    fun addDocument(type: String, expiryDate: String, entity: String) {
         val motoId = _uiState.value.motorcycleId ?: return
         
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isSaving = true)
             try {
-                val docRef = db.collection("maintenance").document()
-                val maintenance = Maintenance(
+                val docRef = db.collection("documents").document()
+                val newDoc = Document(
                     id = docRef.id,
                     motorcycleId = motoId,
-                    description = description,
-                    status = if (isCompleted) "COMPLETED" else "SCHEDULED",
-                    schedulingType = type,
-                    targetMileage = if (type == "MILEAGE") value.toIntOrNull() else null,
-                    targetDate = if (type == "TIME") value else null,
-                    completionDate = if (isCompleted) value else null, // Simplificación para el ejemplo
-                    completionMileage = if (isCompleted) value.toIntOrNull() else null
+                    type = type,
+                    expiryDate = expiryDate,
+                    entity = entity,
+                    status = "Vigente"
                 )
                 
-                docRef.set(maintenance).await()
-                loadMaintenance(motoId) // Recargar lista
+                docRef.set(newDoc).await()
+                loadDocuments(motoId)
                 _uiState.value = _uiState.value.copy(isSaving = false)
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(isSaving = false)

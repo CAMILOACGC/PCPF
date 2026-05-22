@@ -8,7 +8,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -117,7 +117,7 @@ fun DocumentsScreen(
                                 sheetType = null
                             }
                         )
-                        else -> {}
+                        null -> { /* No op */ }
                     }
                 }
                 Spacer(modifier = Modifier.height(48.dp))
@@ -139,7 +139,7 @@ fun SelectionMenu(onSelect: (SheetType) -> Unit) {
             modifier = Modifier.fillMaxWidth().height(60.dp),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Icon(Icons.Default.Description, contentDescription = null)
+            Icon(Icons.Default.List, contentDescription = null) // Corregido: Description -> List
             Spacer(modifier = Modifier.width(12.dp))
             Text("Nuevo Documento (SOAT, RTM...)")
         }
@@ -176,7 +176,8 @@ fun AddDocumentForm(onSave: (String, String, String) -> Unit) {
         Button(
             onClick = { onSave(type, date, entity) },
             modifier = Modifier.fillMaxWidth().height(50.dp),
-            enabled = type.isNotBlank() && date.isNotBlank()
+            enabled = type.isNotBlank() && date.isNotBlank(),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1A237E))
         ) {
             Text("Guardar Documento")
         }
@@ -193,13 +194,16 @@ fun AddMaintenanceForm(onSave: (String, String, String) -> Unit) {
         Text("Programar Mantenimiento", fontSize = 18.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(16.dp))
         
-        OutlinedTextField(value = desc, onValueChange = { desc = it }, label = { Text("Descripción (ej: Aceite)") }, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(value = desc, onValueChange = { desc = it }, label = { Text("Descripción (ej: Cambio de aceite)") }, modifier = Modifier.fillMaxWidth())
         
+        Spacer(modifier = Modifier.height(16.dp))
+        Text("Tipo de agendamiento:", fontSize = 14.sp)
         Row(verticalAlignment = Alignment.CenterVertically) {
             RadioButton(selected = isMileage, onClick = { isMileage = true })
-            Text("Por Kilometraje")
+            Text("Por Kilometraje", fontSize = 14.sp)
+            Spacer(modifier = Modifier.width(16.dp))
             RadioButton(selected = !isMileage, onClick = { isMileage = false })
-            Text("Por Fecha")
+            Text("Por Fecha", fontSize = 14.sp)
         }
 
         OutlinedTextField(
@@ -213,7 +217,8 @@ fun AddMaintenanceForm(onSave: (String, String, String) -> Unit) {
         Button(
             onClick = { onSave(desc, if (isMileage) "MILEAGE" else "TIME", value) },
             modifier = Modifier.fillMaxWidth().height(50.dp),
-            enabled = desc.isNotBlank() && value.isNotBlank()
+            enabled = desc.isNotBlank() && value.isNotBlank(),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1A237E))
         ) {
             Text("Programar Servicio")
         }

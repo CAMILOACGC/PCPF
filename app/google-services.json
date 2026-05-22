@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "340173266979",
+    "project_id": "motor-c8a1a",
+    "storage_bucket": "motor-c8a1a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:340173266979:android:f02a94ef8d3574ea299196",
+        "android_client_info": {
+          "package_name": "com.example.proyecto_final"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "340173266979-s6aivh3coarn3tl8roclgn5lpo577r1o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.proyecto_final",
+            "certificate_hash": "564453b5b0969cbef74c13c089e610900825b42a"
+          }
+        },
+        {
+          "client_id": "340173266979-a8o252hibu37080v6h98pqg7m2ojucck.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAebBH68yjhSXPxL554q7RqEXE_VStNnnk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "340173266979-a8o252hibu37080v6h98pqg7m2ojucck.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

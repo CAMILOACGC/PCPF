@@ -57,9 +57,10 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation("androidx.navigation:navigation-compose:2.8.5")
     
-    // Google Maps
+    // Google Maps & Location
     implementation(libs.maps.compose)
     implementation("com.google.android.gms:play-services-maps:19.0.0")
+    implementation("com.google.android.gms:play-services-location:21.3.0")
 
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:34.13.0"))

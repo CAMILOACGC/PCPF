@@ -1,5 +1,9 @@
 package com.example.proyecto_final.view
 
+import android.Manifest
+import android.annotation.SuppressLint
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -7,10 +11,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -20,22 +25,39 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.proyecto_final.ui.theme.PROYECTO_FINALTheme
 import com.example.proyecto_final.viewmodel.GPSViewModel
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.rememberMarkerState
-import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.android.gms.maps.model.JointType
+import com.google.android.gms.maps.model.RoundCap
+import com.google.maps.android.compose.*
 
+@SuppressLint("MissingPermission")
 @Composable
 fun GPSScreen(navController: NavController, viewModel: GPSViewModel = viewModel()) {
-    val bogota = LatLng(4.6097, -74.0817) // Ejemplo: Bogotá
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(bogota, 15f)
-    }
+    val context = LocalContext.current
+    val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
     
-    // Corregido: Usar rememberMarkerState para evitar errores de recomposición
-    val markerState = rememberMarkerState(position = bogota)
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(LatLng(4.6097, -74.0817), 15f)
+    }
+
+    // Permission handling
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+            permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
+            viewModel.startTracking(fusedLocationClient)
+        }
+    }
+
+    // Update camera when route changes
+    LaunchedEffect(viewModel.routePoints.size) {
+        if (viewModel.routePoints.isNotEmpty()) {
+            cameraPositionState.position = CameraPosition.fromLatLngZoom(viewModel.routePoints.last(), 17f)
+        }
+    }
 
     Scaffold(
         bottomBar = { BottomNavigationBar(navController) }
@@ -71,13 +93,26 @@ fun GPSScreen(navController: NavController, viewModel: GPSViewModel = viewModel(
             Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
                 GoogleMap(
                     modifier = Modifier.fillMaxSize(),
-                    cameraPositionState = cameraPositionState
+                    cameraPositionState = cameraPositionState,
+                    properties = MapProperties(isMyLocationEnabled = viewModel.isTracking),
+                    uiSettings = MapUiSettings(myLocationButtonEnabled = true)
                 ) {
-                    Marker(
-                        state = markerState,
-                        title = "Mi Ubicación",
-                        snippet = "Punto de inicio"
-                    )
+                    if (viewModel.routePoints.isNotEmpty()) {
+                        Polyline(
+                            points = viewModel.routePoints.toList(),
+                            color = Color(0xFF2196F3),
+                            width = 12f,
+                            jointType = JointType.ROUND,
+                            startCap = RoundCap(),
+                            endCap = RoundCap()
+                        )
+                        
+                        Marker(
+                            state = rememberMarkerState(position = viewModel.routePoints.last()),
+                            title = "Mi Ubicación",
+                            snippet = "V. Actual: ${viewModel.speed} km/h"
+                        )
+                    }
                 }
 
                 Surface(
@@ -87,7 +122,7 @@ fun GPSScreen(navController: NavController, viewModel: GPSViewModel = viewModel(
                 ) {
                     Text(
                         text = if (viewModel.isTracking) "● En curso" else "● Detenido",
-                        color = Color.White,
+                        color = if (viewModel.isTracking) Color.Green else Color.White,
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                         fontSize = 12.sp
                     )
@@ -105,13 +140,24 @@ fun GPSScreen(navController: NavController, viewModel: GPSViewModel = viewModel(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    GPSMetricCard(viewModel.speed, "km/h", Modifier.weight(1f))
-                    GPSMetricCard(viewModel.distance, "km", Modifier.weight(1f))
-                    GPSMetricCard(viewModel.time, "tiempo", Modifier.weight(1f))
+                    GPSMetricCard(viewModel.maxSpeed, "km/h Máx", Modifier.weight(1f))
+                    GPSMetricCard(viewModel.distance, "km Total", Modifier.weight(1f))
+                    GPSMetricCard(viewModel.time, "Tiempo", Modifier.weight(1f))
                 }
 
                 Button(
-                    onClick = { viewModel.toggleTracking() },
+                    onClick = {
+                        if (viewModel.isTracking) {
+                            viewModel.stopTracking()
+                        } else {
+                            permissionLauncher.launch(
+                                arrayOf(
+                                    Manifest.permission.ACCESS_FINE_LOCATION,
+                                    Manifest.permission.ACCESS_COARSE_LOCATION
+                                )
+                            )
+                        }
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),

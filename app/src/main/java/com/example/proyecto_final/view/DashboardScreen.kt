@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.proyecto_final.R
 import com.example.proyecto_final.ui.theme.PROYECTO_FINALTheme
 import com.example.proyecto_final.viewmodel.DashboardViewModel
 
@@ -66,13 +68,11 @@ fun EmptyDashboardState(navController: NavController) {
             color = Color(0xFF1A237E).copy(alpha = 0.1f),
             shape = RoundedCornerShape(60.dp)
         ) {
-            Box(contentAlignment = Alignment.Center) {
-                Text("🏍️", fontSize = 48.sp)
-            }
+
         }
         Spacer(modifier = Modifier.height(24.dp))
         Text(
-            text = "No tienes motocicletas registradas",
+            text = stringResource(R.string.empty_dashboard_title),
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             color = Color(0xFF1A237E),
@@ -80,21 +80,21 @@ fun EmptyDashboardState(navController: NavController) {
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Registra tu primera moto para empezar a trackear tus mantenimientos y recorridos.",
+            text = stringResource(R.string.empty_dashboard_subtitle),
             fontSize = 14.sp,
             color = Color.Gray,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(32.dp))
         Button(
-            onClick = { navController.navigate(Screen.RegisterMotorcycle.route) },
+            onClick = { navController.navigate("register_motorcycle") },
             modifier = Modifier.fillMaxWidth().height(56.dp),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1A237E))
         ) {
             Icon(Icons.Default.Add, contentDescription = null)
             Spacer(modifier = Modifier.width(8.dp))
-            Text("Registrar Motocicleta")
+            Text(stringResource(R.string.register_motorcycle_title))
         }
     }
 }
@@ -106,7 +106,7 @@ fun DashboardContent(navController: NavController, uiState: com.example.proyecto
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        HeaderSection(uiState.motorcycle?.brand ?: "Mi Motocicleta", uiState.motorcycle?.model ?: "")
+        HeaderSection(uiState.motorcycle?.brand ?: stringResource(R.string.default_moto_title), uiState.motorcycle?.model ?: "")
         
         Column(
             modifier = Modifier.padding(16.dp),
@@ -117,7 +117,7 @@ fun DashboardContent(navController: NavController, uiState: com.example.proyecto
             DocumentsCard(uiState.soatStatus, uiState.rtmStatus)
             
             Button(
-                onClick = { navController.navigate(Screen.GPS.route) },
+                onClick = { navController.navigate("gps") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -126,7 +126,7 @@ fun DashboardContent(navController: NavController, uiState: com.example.proyecto
             ) {
                 Icon(Icons.Default.LocationOn, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Iniciar Recorrido GPS")
+                Text(stringResource(R.string.button_start_gps))
             }
             
             Row(
@@ -134,13 +134,13 @@ fun DashboardContent(navController: NavController, uiState: com.example.proyecto
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 SmallStatusCard(
-                    title = "Último servicio",
+                    title = stringResource(R.string.label_last_service),
                     value = uiState.lastServiceDays,
                     icon = Icons.Default.Build,
                     modifier = Modifier.weight(1f)
                 )
                 SmallStatusCard(
-                    title = "Alertas",
+                    title = stringResource(R.string.label_alerts),
                     value = uiState.pendingAlerts,
                     icon = Icons.Default.Notifications,
                     modifier = Modifier.weight(1f)
@@ -188,7 +188,7 @@ fun MileageCard(mileage: String) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.Default.Refresh, contentDescription = null, tint = Color.Gray)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Kilometraje Actual", color = Color.Gray, fontWeight = FontWeight.Medium)
+                Text(stringResource(R.string.label_mileage), color = Color.Gray, fontWeight = FontWeight.Medium)
             }
             Spacer(modifier = Modifier.height(16.dp))
             Row(verticalAlignment = Alignment.Bottom) {
@@ -199,7 +199,7 @@ fun MileageCard(mileage: String) {
                     color = Color(0xFF1A237E)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
-                Text(text = "km", fontSize = 18.sp, color = Color.Gray, modifier = Modifier.padding(bottom = 6.dp))
+                Text(text = stringResource(R.string.unit_km), fontSize = 18.sp, color = Color.Gray, modifier = Modifier.padding(bottom = 6.dp))
             }
         }
     }
@@ -216,11 +216,11 @@ fun MaintenanceCard(oil: String, check: String) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.Default.Build, contentDescription = null, tint = Color(0xFF2196F3))
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Próximo Mantenimiento", color = Color.Gray, fontWeight = FontWeight.Medium)
+                Text(stringResource(R.string.next_maintenance_title), color = Color.Gray, fontWeight = FontWeight.Medium)
             }
             Spacer(modifier = Modifier.height(16.dp))
-            MaintenanceRow("Cambio de aceite", oil, Color(0xFF2196F3))
-            MaintenanceRow("Revisión general", check, Color(0xFF2196F3))
+            MaintenanceRow(stringResource(R.string.maintenance_oil_change), oil, Color(0xFF2196F3))
+            MaintenanceRow(stringResource(R.string.maintenance_general_check), check, Color(0xFF2196F3))
         }
     }
 }
@@ -249,11 +249,11 @@ fun DocumentsCard(soat: String, rtm: String) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.Default.Edit, contentDescription = null, tint = Color(0xFF4CAF50))
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Estado de Documentos", color = Color.Gray, fontWeight = FontWeight.Medium)
+                Text(stringResource(R.string.document_status_title), color = Color.Gray, fontWeight = FontWeight.Medium)
             }
             Spacer(modifier = Modifier.height(16.dp))
-            DocumentRow("SOAT", soat, if (soat == "Vigente") Color(0xFF4CAF50) else Color(0xFFFFA000))
-            DocumentRow("Técnico-mecánica", rtm, if (rtm == "Vigente") Color(0xFF4CAF50) else Color(0xFFFFA000))
+            DocumentRow("SOAT", soat, if (soat == "Vigente" || soat == "Valid") Color(0xFF4CAF50) else Color(0xFFFFA000))
+            DocumentRow(stringResource(R.string.label_tecno_expiry), rtm, if (rtm == "Vigente" || rtm == "Valid") Color(0xFF4CAF50) else Color(0xFFFFA000))
         }
     }
 }
@@ -302,33 +302,33 @@ fun BottomNavigationBar(navController: NavController) {
     NavigationBar(containerColor = Color.White) {
         NavigationBarItem(
             icon = { Icon(Icons.Default.Home, contentDescription = null) },
-            label = { Text("Inicio") },
-            selected = currentRoute == Screen.Dashboard.route,
-            onClick = { navController.navigate(Screen.Dashboard.route) }
+            label = { Text(stringResource(R.string.nav_home)) },
+            selected = currentRoute == "dashboard",
+            onClick = { navController.navigate("dashboard") }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Default.Add, contentDescription = null) },
-            label = { Text("Registrar") },
-            selected = currentRoute == Screen.RegisterMotorcycle.route,
-            onClick = { navController.navigate(Screen.RegisterMotorcycle.route) }
+            label = { Text(stringResource(R.string.nav_register)) },
+            selected = currentRoute == "register_motorcycle",
+            onClick = { navController.navigate("register_motorcycle") }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Default.Settings, contentDescription = null) },
-            label = { Text("Mantenimiento") },
-            selected = currentRoute == Screen.Maintenance.route,
-            onClick = { navController.navigate(Screen.Maintenance.route) }
+            label = { Text(stringResource(R.string.nav_maintenance)) },
+            selected = currentRoute == "maintenance",
+            onClick = { navController.navigate("maintenance") }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Default.List, contentDescription = null) },
-            label = { Text("Documentos") },
-            selected = currentRoute == Screen.Documents.route,
-            onClick = { navController.navigate(Screen.Documents.route) }
+            label = { Text(stringResource(R.string.nav_documents)) },
+            selected = currentRoute == "documents",
+            onClick = { navController.navigate("documents") }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Default.LocationOn, contentDescription = null) },
-            label = { Text("GPS") },
-            selected = currentRoute == Screen.GPS.route,
-            onClick = { navController.navigate(Screen.GPS.route) }
+            label = { Text(stringResource(R.string.nav_gps)) },
+            selected = currentRoute == "gps",
+            onClick = { navController.navigate("gps") }
         )
     }
 }

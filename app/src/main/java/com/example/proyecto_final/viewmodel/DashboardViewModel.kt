@@ -34,7 +34,11 @@ class DashboardViewModel : ViewModel() {
     }
 
     fun loadDashboardData() {
-        val userId = auth.currentUser?.uid ?: return
+        val userId = auth.currentUser?.uid
+        if (userId == null) {
+            _uiState.value = _uiState.value.copy(isLoading = false)
+            return
+        }
         
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)

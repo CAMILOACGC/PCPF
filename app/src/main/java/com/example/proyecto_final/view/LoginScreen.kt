@@ -25,11 +25,18 @@ import com.example.proyecto_final.viewmodel.LoginViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun LoginScreen(onLoginSuccess: () -> Unit, viewModel: LoginViewModel = viewModel()) {
     val context = LocalContext.current
     
+    // Redirección automática si ya hay una sesión activa
+    LaunchedEffect(Unit) {
+        if (FirebaseAuth.getInstance().currentUser != null) {
+            onLoginSuccess()
+        }
+    }
 
     val webClientId = "340173266979-a8o252hibu37080v6h98pqg7m2ojucck.apps.googleusercontent.com"
     
@@ -70,7 +77,9 @@ fun LoginScreen(onLoginSuccess: () -> Unit, viewModel: LoginViewModel = viewMode
             color = Color(0xFF1A237E).copy(alpha = 0.1f),
             shape = RoundedCornerShape(60.dp)
         ) {
-
+            Box(contentAlignment = Alignment.Center) {
+                Text("🏍️", fontSize = 48.sp)
+            }
         }
 
         Spacer(modifier = Modifier.height(32.dp))

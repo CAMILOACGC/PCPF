@@ -16,7 +16,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         remoteMessage.notification?.let {
-            showNotification(it.title ?: "Moto Care", it.body ?: "")
+            showNotification(it.title ?: "MotoTrack", it.body ?: "")
         }
     }
 

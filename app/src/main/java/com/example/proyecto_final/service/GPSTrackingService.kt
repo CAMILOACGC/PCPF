@@ -62,7 +62,7 @@ class GPSTrackingService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val serviceChannel = NotificationChannel(
                 channelId,
-                "GPS Tracking Service",
+                "MotoTrack Tracking Service",
                 NotificationManager.IMPORTANCE_LOW
             )
             val manager = getSystemService(NotificationManager::class.java)
@@ -78,13 +78,13 @@ class GPSTrackingService : Service() {
         )
 
         val text = if (location != null) {
-            "Rastreo activo: Speed %.1f km/h".format(location.speed * 3.6)
+            "Rastreo activo: Velocidad %.1f km/h".format(location.speed * 3.6)
         } else {
             "Buscando señal GPS..."
         }
 
         return NotificationCompat.Builder(this, channelId)
-            .setContentTitle("PCPF - Seguimiento en curso")
+            .setContentTitle("MotoTrack - Seguimiento en curso")
             .setContentText(text)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentIntent(pendingIntent)

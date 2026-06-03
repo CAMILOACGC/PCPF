@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Moto Care</string>
+    <string name="app_name">MotoTrack</string>
 
     <!-- Navegación -->
     <string name="nav_gps">GPS</string>
@@ -10,7 +10,7 @@
     <string name="nav_documents">Documentos</string>
 
     <!-- Pantalla de Inicio de Sesión -->
-    <string name="login_welcome">Bienvenido a Moto Care</string>
+    <string name="login_welcome">Bienvenido a MotoTrack</string>
     <string name="login_subtitle">Gestiona tu motocicleta de forma inteligente</string>
     <string name="login_button_google">Continuar con Google</string>
     <string name="login_footer">Solo necesitas tu cuenta de Google para ingresar</string>

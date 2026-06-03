@@ -12,12 +12,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.proyecto_final.R
 import com.example.proyecto_final.ui.theme.PROYECTO_FINALTheme
 import com.example.proyecto_final.viewmodel.LoginViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -28,7 +30,7 @@ import com.google.android.gms.common.api.ApiException
 fun LoginScreen(onLoginSuccess: () -> Unit, viewModel: LoginViewModel = viewModel()) {
     val context = LocalContext.current
     
-    // ID extraído de tu google-services.json
+
     val webClientId = "340173266979-a8o252hibu37080v6h98pqg7m2ojucck.apps.googleusercontent.com"
     
     val gso = remember {
@@ -68,15 +70,13 @@ fun LoginScreen(onLoginSuccess: () -> Unit, viewModel: LoginViewModel = viewMode
             color = Color(0xFF1A237E).copy(alpha = 0.1f),
             shape = RoundedCornerShape(60.dp)
         ) {
-            Box(contentAlignment = Alignment.Center) {
-                Text("🏍️", fontSize = 48.sp)
-            }
+
         }
 
         Spacer(modifier = Modifier.height(32.dp))
 
         Text(
-            text = "Bienvenido a PCPF",
+            text = stringResource(R.string.login_welcome),
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
             color = Color(0xFF1A237E),
@@ -86,7 +86,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit, viewModel: LoginViewModel = viewMode
         Spacer(modifier = Modifier.height(8.dp))
         
         Text(
-            text = "Gestiona tu motocicleta de forma inteligente",
+            text = stringResource(R.string.login_subtitle),
             fontSize = 16.sp,
             color = Color.Gray,
             textAlign = TextAlign.Center
@@ -125,7 +125,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit, viewModel: LoginViewModel = viewMode
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    "Continuar con Google",
+                    text = stringResource(R.string.login_button_google),
                     color = Color.Black,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium
@@ -136,7 +136,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit, viewModel: LoginViewModel = viewMode
         Spacer(modifier = Modifier.height(24.dp))
         
         Text(
-            text = "Solo necesitas tu cuenta de Google para ingresar",
+            text = stringResource(R.string.login_footer),
             fontSize = 12.sp,
             color = Color.Gray,
             textAlign = TextAlign.Center

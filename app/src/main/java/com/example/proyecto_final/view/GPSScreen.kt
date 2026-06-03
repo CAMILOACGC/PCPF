@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.proyecto_final.R
 import com.example.proyecto_final.ui.theme.PROYECTO_FINALTheme
 import com.example.proyecto_final.viewmodel.GPSViewModel
 import com.google.android.gms.location.LocationServices
@@ -76,13 +78,13 @@ fun GPSScreen(navController: NavController, viewModel: GPSViewModel = viewModel(
             ) {
                 Column {
                     Text(
-                        text = "Recorrido GPS",
+                        text = stringResource(R.string.gps_title),
                         color = Color.White,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Rastrea tu viaje en tiempo real",
+                        text = stringResource(R.string.gps_subtitle),
                         color = Color.White.copy(alpha = 0.7f),
                         fontSize = 12.sp
                     )
@@ -109,8 +111,8 @@ fun GPSScreen(navController: NavController, viewModel: GPSViewModel = viewModel(
                         
                         Marker(
                             state = rememberMarkerState(position = viewModel.routePoints.last()),
-                            title = "Mi Ubicación",
-                            snippet = "V. Actual: ${viewModel.speed} km/h"
+                            title = stringResource(R.string.marker_my_location),
+                            snippet = stringResource(R.string.marker_speed_snippet, viewModel.speed)
                         )
                     }
                 }
@@ -121,7 +123,7 @@ fun GPSScreen(navController: NavController, viewModel: GPSViewModel = viewModel(
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Text(
-                        text = if (viewModel.isTracking) "● En curso" else "● Detenido",
+                        text = if (viewModel.isTracking) stringResource(R.string.status_tracking) else stringResource(R.string.status_stopped),
                         color = if (viewModel.isTracking) Color.Green else Color.White,
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                         fontSize = 12.sp
@@ -140,9 +142,9 @@ fun GPSScreen(navController: NavController, viewModel: GPSViewModel = viewModel(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    GPSMetricCard(viewModel.maxSpeed, "km/h Máx", Modifier.weight(1f))
-                    GPSMetricCard(viewModel.distance, "km Total", Modifier.weight(1f))
-                    GPSMetricCard(viewModel.time, "Tiempo", Modifier.weight(1f))
+                    GPSMetricCard(viewModel.maxSpeed, stringResource(R.string.unit_max_speed), Modifier.weight(1f))
+                    GPSMetricCard(viewModel.distance, stringResource(R.string.unit_total_distance), Modifier.weight(1f))
+                    GPSMetricCard(viewModel.time, stringResource(R.string.unit_time), Modifier.weight(1f))
                 }
 
                 Button(
@@ -171,7 +173,7 @@ fun GPSScreen(navController: NavController, viewModel: GPSViewModel = viewModel(
                         contentDescription = null
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(if (viewModel.isTracking) "Detener Recorrido" else "Iniciar Recorrido")
+                    Text(if (viewModel.isTracking) stringResource(R.string.button_stop_tracking) else stringResource(R.string.button_start_tracking))
                 }
             }
         }

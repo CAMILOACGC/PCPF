@@ -1,15 +1,22 @@
 package com.example.proyecto_final.viewmodel
 
 import android.annotation.SuppressLint
+import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.location.Location
+import android.os.Build
 import android.os.Looper
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
+import androidx.core.app.NotificationCompat
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.proyecto_final.MODELS.Motorcycle
+import com.example.proyecto_final.R
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
@@ -21,7 +28,7 @@ import kotlinx.coroutines.tasks.await
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
-class GPSViewModel : ViewModel() {
+class GPSViewModel(application: Application) : AndroidViewModel(application) {
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
 
@@ -46,6 +53,7 @@ class GPSViewModel : ViewModel() {
     private var startTime = 0L
     private var timerJob: Job? = null
     private var totalDistance = 0.0
+    private var speedAlertShown = false
 
     fun startTracking(client: FusedLocationProviderClient) {
         if (isTracking) return
@@ -56,6 +64,7 @@ class GPSViewModel : ViewModel() {
         totalDistance = 0.0
         maxSpeedValue = 0.0
         maxSpeed = "0.0"
+        speedAlertShown = false
         routePoints.clear()
         
         startTimer()
@@ -148,6 +157,11 @@ class GPSViewModel : ViewModel() {
         if (speedKmH > maxSpeedValue) {
             maxSpeedValue = speedKmH
             maxSpeed = String.format(Locale.getDefault(), "%.1f", maxSpeedValue)
+            
+            if (maxSpeedValue > 50 && !speedAlertShown) {
+                showSpeedNotification()
+                speedAlertShown = true
+            }
         }
 
         if (routePoints.isNotEmpty()) {
@@ -163,6 +177,27 @@ class GPSViewModel : ViewModel() {
         }
         
         routePoints.add(newPoint)
+    }
+
+    private fun showSpeedNotification() {
+        val context = getApplication<Application>().applicationContext
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val channelId = "speed_alerts"
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(channelId, "Alertas de Velocidad", NotificationManager.IMPORTANCE_HIGH)
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        val notification = NotificationCompat.Builder(context, channelId)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentTitle("Alerta de Velocidad")
+            .setContentText("Has superado los 50 km/h. Por favor, conduce con precaución.")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
+            .build()
+
+        notificationManager.notify(1001, notification)
     }
 
     private fun formatTime(millis: Long): String {

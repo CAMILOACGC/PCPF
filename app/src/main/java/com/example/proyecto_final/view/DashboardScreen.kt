@@ -68,7 +68,9 @@ fun EmptyDashboardState(navController: NavController) {
             color = Color(0xFF1A237E).copy(alpha = 0.1f),
             shape = RoundedCornerShape(60.dp)
         ) {
-
+            Box(contentAlignment = Alignment.Center) {
+                Text("🏍️", fontSize = 48.sp)
+            }
         }
         Spacer(modifier = Modifier.height(24.dp))
         Text(
@@ -87,7 +89,7 @@ fun EmptyDashboardState(navController: NavController) {
         )
         Spacer(modifier = Modifier.height(32.dp))
         Button(
-            onClick = { navController.navigate("register_motorcycle") },
+            onClick = { navController.navigate(Screen.RegisterMotorcycle.route) },
             modifier = Modifier.fillMaxWidth().height(56.dp),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1A237E))
@@ -117,7 +119,7 @@ fun DashboardContent(navController: NavController, uiState: com.example.proyecto
             DocumentsCard(uiState.soatStatus, uiState.rtmStatus)
             
             Button(
-                onClick = { navController.navigate("gps") },
+                onClick = { navController.navigate(Screen.GPS.route) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -303,32 +305,32 @@ fun BottomNavigationBar(navController: NavController) {
         NavigationBarItem(
             icon = { Icon(Icons.Default.Home, contentDescription = null) },
             label = { Text(stringResource(R.string.nav_home)) },
-            selected = currentRoute == "dashboard",
-            onClick = { navController.navigate("dashboard") }
+            selected = currentRoute == Screen.Dashboard.route,
+            onClick = { navController.navigate(Screen.Dashboard.route) }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Default.Add, contentDescription = null) },
             label = { Text(stringResource(R.string.nav_register)) },
-            selected = currentRoute == "register_motorcycle",
-            onClick = { navController.navigate("register_motorcycle") }
+            selected = currentRoute == Screen.RegisterMotorcycle.route,
+            onClick = { navController.navigate(Screen.RegisterMotorcycle.route) }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Default.Settings, contentDescription = null) },
             label = { Text(stringResource(R.string.nav_maintenance)) },
-            selected = currentRoute == "maintenance",
-            onClick = { navController.navigate("maintenance") }
+            selected = currentRoute == Screen.Maintenance.route,
+            onClick = { navController.navigate(Screen.Maintenance.route) }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Default.List, contentDescription = null) },
             label = { Text(stringResource(R.string.nav_documents)) },
-            selected = currentRoute == "documents",
-            onClick = { navController.navigate("documents") }
+            selected = currentRoute == Screen.Documents.route,
+            onClick = { navController.navigate(Screen.Documents.route) }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Default.LocationOn, contentDescription = null) },
             label = { Text(stringResource(R.string.nav_gps)) },
-            selected = currentRoute == "gps",
-            onClick = { navController.navigate("gps") }
+            selected = currentRoute == Screen.GPS.route,
+            onClick = { navController.navigate(Screen.GPS.route) }
         )
     }
 }

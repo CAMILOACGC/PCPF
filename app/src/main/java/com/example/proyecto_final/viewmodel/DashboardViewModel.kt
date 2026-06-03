@@ -36,6 +36,7 @@ class DashboardViewModel : ViewModel() {
     fun loadDashboardData() {
         val userId = auth.currentUser?.uid
         if (userId == null) {
+            // Si no hay usuario, apagamos el estado de carga para mostrar el login o el estado vacío
             _uiState.value = _uiState.value.copy(isLoading = false)
             return
         }
@@ -61,6 +62,7 @@ class DashboardViewModel : ViewModel() {
                     )
                     loadSummaryItems(motoId, currentMileage)
                 } else {
+                    // SI NO HAY MOTO: Apagamos el loading y marcamos hasMotorcycle = false
                     _uiState.value = _uiState.value.copy(
                         hasMotorcycle = false,
                         isLoading = false

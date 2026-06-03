@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">MotoTrack</string>
 
-
+    <!-- Navegación -->
     <string name="nav_gps">GPS</string>
     <string name="nav_dashboard">Panel</string>
     <string name="nav_maintenance">Mantenimiento</string>
@@ -13,7 +13,13 @@
     <string name="login_welcome">Bienvenido a MotoTrack</string>
     <string name="login_subtitle">Gestiona tu motocicleta de forma inteligente</string>
     <string name="login_button_google">Continuar con Google</string>
-    <string name="login_footer">Solo necesitas tu cuenta de Google para ingresar</string>
+    <string name="label_email">Correo Electrónico</string>
+    <string name="label_password">Contraseña</string>
+    <string name="btn_login">Entrar</string>
+    <string name="btn_register">Crear Cuenta</string>
+    <string name="switch_to_register">¿No tienes cuenta? Regístrate</string>
+    <string name="switch_to_login">¿Ya tienes cuenta? Inicia sesión</string>
+    <string name="error_empty_fields">Por favor completa todos los campos</string>
 
     <!-- Pantalla de Registro de Moto -->
     <string name="register_motorcycle_title">Registrar Motocicleta</string>
@@ -53,15 +59,13 @@
     <string name="empty_dashboard_title">No tienes motocicletas registradas</string>
     <string name="empty_dashboard_subtitle">Registra tu primera moto para empezar a trackear tus mantenimientos y recorridos.</string>
     <string name="default_moto_title">Mi Motocicleta</string>
-    <string name="maintenance_oil_change">Cambio de aceite</string>
-    <string name="maintenance_general_check">Revisión general</string>
-    <string name="next_maintenance_title">Próximo Mantenimiento</string>
-    <string name="document_status_title">Estado de Documentos</string>
-    <string name="status_valid">Vigente</string>
-    <string name="status_expired">Vencido</string>
-    <string name="button_start_gps">Iniciar Recorrido GPS</string>
-    <string name="label_last_service">Último servicio</string>
-    <string name="label_alerts">Alertas</string>
     <string name="unit_km">km</string>
+
+    <!-- Pantalla de Documentos -->
+    <string name="documents_mgmt_title">Centro de Gestión</string>
+    <string name="documents_mgmt_subtitle">Documentos y servicios</string>
+    <string name="empty_documents_list">No hay documentos registrados para esta moto.</string>
+    <string name="label_expiry">Vencimiento</string>
+    <string name="add_button_desc">Añadir ítem</string>
 
 </resources>

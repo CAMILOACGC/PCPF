@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -16,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -28,6 +28,15 @@ import com.example.proyecto_final.viewmodel.UnifiedItem
 @Composable
 fun DashboardScreen(navController: NavController, viewModel: DashboardViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
+
+    // REDIRECCIÓN AUTOMÁTICA PARA NUEVOS USUARIOS
+    LaunchedEffect(uiState.isLoading, uiState.hasMotorcycle) {
+        if (!uiState.isLoading && !uiState.hasMotorcycle) {
+            navController.navigate(Screen.RegisterMotorcycle.route) {
+                popUpTo(Screen.Dashboard.route) { inclusive = false }
+            }
+        }
+    }
 
     Scaffold(
         bottomBar = {
@@ -43,57 +52,13 @@ fun DashboardScreen(navController: NavController, viewModel: DashboardViewModel 
             if (uiState.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             } else if (!uiState.hasMotorcycle) {
-                EmptyDashboardState(navController)
+                // Mientras redirige, mostramos un estado de espera limpio
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(stringResource(R.string.empty_dashboard_title), color = Color.Gray)
+                }
             } else {
                 DashboardContent(navController, uiState)
             }
-        }
-    }
-}
-
-@Composable
-fun EmptyDashboardState(navController: NavController) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Surface(
-            modifier = Modifier.size(120.dp),
-            color = Color(0xFF1A237E).copy(alpha = 0.1f),
-            shape = RoundedCornerShape(60.dp)
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                Text("🏍️", fontSize = 48.sp)
-            }
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-        Text(
-            text = stringResource(R.string.empty_dashboard_title),
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF1A237E),
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = stringResource(R.string.empty_dashboard_subtitle),
-            fontSize = 14.sp,
-            color = Color.Gray,
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(32.dp))
-        Button(
-            onClick = { navController.navigate(Screen.RegisterMotorcycle.route) },
-            modifier = Modifier.fillMaxWidth().height(56.dp),
-            shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1A237E))
-        ) {
-            Icon(Icons.Default.Add, contentDescription = null)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(stringResource(R.string.register_motorcycle_title))
         }
     }
 }
@@ -136,24 +101,12 @@ fun HeaderSection(title: String, subtitle: String) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(
-                Color(0xFF1A237E),
-                shape = RoundedCornerShape(bottomStart = 0.dp, bottomEnd = 0.dp)
-            )
+            .background(Color(0xFF1A237E))
             .padding(24.dp)
     ) {
         Column {
-            Text(
-                text = title,
-                color = Color.White,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = subtitle,
-                color = Color.White.copy(alpha = 0.7f),
-                fontSize = 14.sp
-            )
+            Text(text = title, color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            Text(text = subtitle, color = Color.White.copy(alpha = 0.7f), fontSize = 14.sp)
         }
     }
 }
@@ -173,12 +126,7 @@ fun MileageCard(mileage: String) {
             }
             Spacer(modifier = Modifier.height(16.dp))
             Row(verticalAlignment = Alignment.Bottom) {
-                Text(
-                    text = mileage,
-                    fontSize = 36.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1A237E)
-                )
+                Text(text = mileage, fontSize = 36.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A237E))
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(text = stringResource(R.string.unit_km), fontSize = 18.sp, color = Color.Gray, modifier = Modifier.padding(bottom = 6.dp))
             }
@@ -200,9 +148,8 @@ fun SummaryStatusCard(items: List<UnifiedItem>) {
                 Text("Estado de Documentos y Alertas", color = Color.Gray, fontWeight = FontWeight.Medium)
             }
             Spacer(modifier = Modifier.height(16.dp))
-            
             if (items.isEmpty()) {
-                Text("Todo al día", color = Color.Gray, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+                Text("Todo al día", color = Color.Gray, modifier = Modifier.fillMaxWidth())
             } else {
                 items.forEach { item ->
                     DashboardItemRow(item)
@@ -232,28 +179,21 @@ fun DashboardItemRow(item: UnifiedItem) {
 @Composable
 fun BottomNavigationBar(navController: NavController) {
     val currentRoute = navController.currentBackStackEntry?.destination?.route
-
     NavigationBar(containerColor = Color.White) {
         NavigationBarItem(
-            icon = { Icon(Icons.Default.Home, contentDescription = null) },
+            icon = { Icon(Icons.Default.Home, null) },
             label = { Text(stringResource(R.string.nav_home)) },
             selected = currentRoute == Screen.Dashboard.route,
             onClick = { navController.navigate(Screen.Dashboard.route) }
         )
         NavigationBarItem(
-            icon = { Icon(Icons.Default.Add, contentDescription = null) },
-            label = { Text(stringResource(R.string.nav_register)) },
-            selected = currentRoute == Screen.RegisterMotorcycle.route,
-            onClick = { navController.navigate(Screen.RegisterMotorcycle.route) }
-        )
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.List, contentDescription = null) },
+            icon = { Icon(Icons.Default.List, null) },
             label = { Text(stringResource(R.string.nav_documents)) },
             selected = currentRoute == Screen.Documents.route,
             onClick = { navController.navigate(Screen.Documents.route) }
         )
         NavigationBarItem(
-            icon = { Icon(Icons.Default.LocationOn, contentDescription = null) },
+            icon = { Icon(Icons.Default.LocationOn, null) },
             label = { Text(stringResource(R.string.nav_gps)) },
             selected = currentRoute == Screen.GPS.route,
             onClick = { navController.navigate(Screen.GPS.route) }

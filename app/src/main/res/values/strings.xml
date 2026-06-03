@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">MotoTrack</string>
 
+    <!-- Navigation -->
     <string name="nav_gps">GPS</string>
     <string name="nav_dashboard">Dashboard</string>
     <string name="nav_maintenance">Maintenance</string>
@@ -13,6 +14,13 @@
     <string name="login_subtitle">Manage your motorcycle intelligently</string>
     <string name="login_button_google">Continue with Google</string>
     <string name="login_footer">You only need your Google account to log in</string>
+    <string name="label_email">Email</string>
+    <string name="label_password">Password</string>
+    <string name="btn_login">Login</string>
+    <string name="btn_register">Register</string>
+    <string name="switch_to_register">Don\'t have an account? Register here</string>
+    <string name="switch_to_login">Already have an account? Login here</string>
+    <string name="error_empty_fields">Please fill all fields</string>
 
     <!-- Register Motorcycle Screen -->
     <string name="register_motorcycle_title">Register Motorcycle</string>

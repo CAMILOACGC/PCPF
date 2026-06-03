@@ -5,9 +5,9 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.location.Location
 import android.os.Build
-import android.os.Looper
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -17,7 +17,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.proyecto_final.MODELS.Motorcycle
 import com.example.proyecto_final.R
-import com.google.android.gms.location.*
+import com.example.proyecto_final.service.GPSTrackingService
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -25,6 +25,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
@@ -47,18 +50,27 @@ class GPSViewModel(application: Application) : AndroidViewModel(application) {
     
     val routePoints = mutableStateListOf<LatLng>()
 
-    private var fusedLocationClient: FusedLocationProviderClient? = null
-    private var locationCallback: LocationCallback? = null
-    
     private var startTime = 0L
     private var timerJob: Job? = null
     private var totalDistance = 0.0
     private var speedAlertShown = false
 
-    fun startTracking(client: FusedLocationProviderClient) {
+    init {
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this)
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onLocationReceived(location: Location) {
+        if (isTracking) {
+            updateMetrics(location)
+        }
+    }
+
+    fun startTracking() {
         if (isTracking) return
         
-        fusedLocationClient = client
         isTracking = true
         startTime = System.currentTimeMillis()
         totalDistance = 0.0
@@ -68,7 +80,13 @@ class GPSViewModel(application: Application) : AndroidViewModel(application) {
         routePoints.clear()
         
         startTimer()
-        startLocationUpdates()
+        
+        val intent = Intent(getApplication(), GPSTrackingService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getApplication<Application>().startForegroundService(intent)
+        } else {
+            getApplication<Application>().startService(intent)
+        }
     }
 
     fun stopTracking() {
@@ -76,10 +94,9 @@ class GPSViewModel(application: Application) : AndroidViewModel(application) {
         
         isTracking = false
         timerJob?.cancel()
-        locationCallback?.let { callback ->
-            fusedLocationClient?.removeLocationUpdates(callback)
-        }
-        locationCallback = null
+        
+        val intent = Intent(getApplication(), GPSTrackingService::class.java)
+        getApplication<Application>().stopService(intent)
         
         updateMotorcycleMileage()
     }
@@ -111,8 +128,8 @@ class GPSViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun toggleTracking(client: FusedLocationProviderClient) {
-        if (isTracking) stopTracking() else startTracking(client)
+    fun toggleTracking() {
+        if (isTracking) stopTracking() else startTracking()
     }
 
     private fun startTimer() {
@@ -123,28 +140,6 @@ class GPSViewModel(application: Application) : AndroidViewModel(application) {
                 delay(1000)
             }
         }
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun startLocationUpdates() {
-        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5000)
-            .setMinUpdateIntervalMillis(2000)
-            .build()
-
-        val callback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                for (location in locationResult.locations) {
-                    updateMetrics(location)
-                }
-            }
-        }
-        locationCallback = callback
-
-        fusedLocationClient?.requestLocationUpdates(
-            locationRequest,
-            callback,
-            Looper.getMainLooper()
-        )
     }
 
     private fun updateMetrics(location: Location) {
@@ -209,6 +204,9 @@ class GPSViewModel(application: Application) : AndroidViewModel(application) {
 
     override fun onCleared() {
         super.onCleared()
-        stopTracking()
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this)
+        }
+        // No detenemos el servicio aquí para que siga en segundo plano
     }
 }

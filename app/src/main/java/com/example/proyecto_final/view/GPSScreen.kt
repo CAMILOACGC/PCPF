@@ -15,7 +15,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,7 +26,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.proyecto_final.R
 import com.example.proyecto_final.ui.theme.PROYECTO_FINALTheme
 import com.example.proyecto_final.viewmodel.GPSViewModel
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.JointType
@@ -37,9 +35,7 @@ import com.google.maps.android.compose.*
 @SuppressLint("MissingPermission")
 @Composable
 fun GPSScreen(navController: NavController, viewModel: GPSViewModel = viewModel()) {
-    val context = LocalContext.current
-    val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
-    
+
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(LatLng(4.6097, -74.0817), 15f)
     }
@@ -50,7 +46,7 @@ fun GPSScreen(navController: NavController, viewModel: GPSViewModel = viewModel(
     ) { permissions ->
         if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
             permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
-            viewModel.startTracking(fusedLocationClient)
+            viewModel.startTracking()
         }
     }
 

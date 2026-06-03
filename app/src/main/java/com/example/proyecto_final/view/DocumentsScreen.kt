@@ -6,33 +6,31 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.example.proyecto_final.ui.theme.PROYECTO_FINALTheme
+import com.example.proyecto_final.R
 import com.example.proyecto_final.viewmodel.DocumentsViewModel
-import com.example.proyecto_final.viewmodel.MaintenanceViewModel
+import com.example.proyecto_final.viewmodel.ItemStatus
+import com.example.proyecto_final.viewmodel.UnifiedItem
+
+enum class SheetType { DOCUMENT, MAINTENANCE }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DocumentsScreen(
     navController: NavController, 
-    viewModel: DocumentsViewModel = viewModel(),
-    maintViewModel: MaintenanceViewModel = viewModel()
+    viewModel: DocumentsViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showSheet by remember { mutableStateOf(false) }
@@ -48,7 +46,7 @@ fun DocumentsScreen(
                     containerColor = Color(0xFF1A237E),
                     contentColor = Color.White
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = "Agregar")
+                    Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_button_desc))
                 }
             }
         }
@@ -67,13 +65,13 @@ fun DocumentsScreen(
             ) {
                 Column {
                     Text(
-                        text = "Gestión Central",
+                        text = stringResource(R.string.documents_mgmt_title),
                         color = Color.White,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Documentos y servicios",
+                        text = stringResource(R.string.documents_mgmt_subtitle),
                         color = Color.White.copy(alpha = 0.7f),
                         fontSize = 12.sp
                     )
@@ -87,7 +85,7 @@ fun DocumentsScreen(
             } else if (!uiState.hasMotorcycle) {
                 EmptyDocumentsState(navController)
             } else {
-                DocumentsContent(uiState)
+                UnifiedContent(uiState.items)
             }
         }
 
@@ -112,7 +110,7 @@ fun DocumentsScreen(
                         )
                         SheetType.MAINTENANCE -> AddMaintenanceForm(
                             onSave = { desc, type, value ->
-                                maintViewModel.addMaintenance(desc, type, value)
+                                viewModel.addMaintenance(desc, type, value)
                                 showSheet = false
                                 sheetType = null
                             }
@@ -126,33 +124,28 @@ fun DocumentsScreen(
     }
 }
 
-enum class SheetType { DOCUMENT, MAINTENANCE }
-
 @Composable
 fun SelectionMenu(onSelect: (SheetType) -> Unit) {
-    Column(modifier = Modifier.padding(24.dp)) {
-        Text("¿Qué deseas agregar?", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-        Spacer(modifier = Modifier.height(24.dp))
-        
-        OutlinedButton(
-            onClick = { onSelect(SheetType.DOCUMENT) },
-            modifier = Modifier.fillMaxWidth().height(60.dp),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Icon(Icons.Default.List, contentDescription = null) // Corregido: Description -> List
-            Spacer(modifier = Modifier.width(12.dp))
-            Text("Nuevo Documento (SOAT, RTM...)")
-        }
-        
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text("¿Qué deseas agregar?", fontWeight = FontWeight.Bold, fontSize = 18.sp)
         Spacer(modifier = Modifier.height(16.dp))
-        
-        OutlinedButton(
+        Button(
+            onClick = { onSelect(SheetType.DOCUMENT) },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1A237E))
+        ) {
+            Icon(Icons.Default.Info, contentDescription = null)
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Nuevo Documento (SOAT, RTM, etc.)")
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(
             onClick = { onSelect(SheetType.MAINTENANCE) },
-            modifier = Modifier.fillMaxWidth().height(60.dp),
-            shape = RoundedCornerShape(12.dp)
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))
         ) {
             Icon(Icons.Default.Build, contentDescription = null)
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(8.dp))
             Text("Nuevo Mantenimiento")
         }
     }
@@ -164,18 +157,15 @@ fun AddDocumentForm(onSave: (String, String, String) -> Unit) {
     var date by remember { mutableStateOf("") }
     var entity by remember { mutableStateOf("") }
 
-    Column(modifier = Modifier.padding(24.dp)) {
-        Text("Agregar Documento", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-        Spacer(modifier = Modifier.height(16.dp))
-        
+    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text("Detalles del Documento", fontWeight = FontWeight.Bold, fontSize = 18.sp)
         OutlinedTextField(value = type, onValueChange = { type = it }, label = { Text("Tipo (ej: SOAT)") }, modifier = Modifier.fillMaxWidth())
-        OutlinedTextField(value = date, onValueChange = { date = it }, label = { Text("Vencimiento (DD/MM/AAAA)") }, modifier = Modifier.fillMaxWidth())
-        OutlinedTextField(value = entity, onValueChange = { entity = it }, label = { Text("Entidad emisora") }, modifier = Modifier.fillMaxWidth())
-        
-        Spacer(modifier = Modifier.height(24.dp))
+        OutlinedTextField(value = date, onValueChange = { date = it }, label = { Text("Fecha Vencimiento (dd/mm/yyyy)") }, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(value = entity, onValueChange = { entity = it }, label = { Text("Entidad") }, modifier = Modifier.fillMaxWidth())
+        Spacer(modifier = Modifier.height(16.dp))
         Button(
-            onClick = { onSave(type, date, entity) },
-            modifier = Modifier.fillMaxWidth().height(50.dp),
+            onClick = { onSave(type, date, entity) }, 
+            modifier = Modifier.fillMaxWidth(),
             enabled = type.isNotBlank() && date.isNotBlank(),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1A237E))
         ) {
@@ -187,40 +177,34 @@ fun AddDocumentForm(onSave: (String, String, String) -> Unit) {
 @Composable
 fun AddMaintenanceForm(onSave: (String, String, String) -> Unit) {
     var desc by remember { mutableStateOf("") }
+    var type by remember { mutableStateOf("MILEAGE") }
     var value by remember { mutableStateOf("") }
-    var isMileage by remember { mutableStateOf(true) }
 
-    Column(modifier = Modifier.padding(24.dp)) {
-        Text("Programar Mantenimiento", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-        Spacer(modifier = Modifier.height(16.dp))
+    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text("Programar Mantenimiento", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+        OutlinedTextField(value = desc, onValueChange = { desc = it }, label = { Text("Descripción (ej: Cambio Aceite)") }, modifier = Modifier.fillMaxWidth())
         
-        OutlinedTextField(value = desc, onValueChange = { desc = it }, label = { Text("Descripción (ej: Cambio de aceite)") }, modifier = Modifier.fillMaxWidth())
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        Text("Tipo de agendamiento:", fontSize = 14.sp)
         Row(verticalAlignment = Alignment.CenterVertically) {
-            RadioButton(selected = isMileage, onClick = { isMileage = true })
-            Text("Por Kilometraje", fontSize = 14.sp)
-            Spacer(modifier = Modifier.width(16.dp))
-            RadioButton(selected = !isMileage, onClick = { isMileage = false })
-            Text("Por Fecha", fontSize = 14.sp)
+            RadioButton(selected = type == "MILEAGE", onClick = { type = "MILEAGE" })
+            Text("Por Kilometraje", modifier = Modifier.padding(end = 16.dp))
+            RadioButton(selected = type == "TIME", onClick = { type = "TIME" })
+            Text("Por Fecha")
         }
 
         OutlinedTextField(
             value = value, 
             onValueChange = { value = it }, 
-            label = { Text(if (isMileage) "Kilometraje objetivo" else "Fecha (DD/MM/AAAA)") }, 
+            label = { Text(if(type == "MILEAGE") "Kilometraje Objetivo" else "Fecha Objetivo (dd/mm/yyyy)") }, 
             modifier = Modifier.fillMaxWidth()
         )
-        
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         Button(
-            onClick = { onSave(desc, if (isMileage) "MILEAGE" else "TIME", value) },
-            modifier = Modifier.fillMaxWidth().height(50.dp),
+            onClick = { onSave(desc, type, value) }, 
+            modifier = Modifier.fillMaxWidth(),
             enabled = desc.isNotBlank() && value.isNotBlank(),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1A237E))
         ) {
-            Text("Programar Servicio")
+            Text("Programar Mantenimiento")
         }
     }
 }
@@ -228,22 +212,15 @@ fun AddMaintenanceForm(onSave: (String, String, String) -> Unit) {
 @Composable
 fun EmptyDocumentsState(navController: NavController) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
+        modifier = Modifier.fillMaxSize().padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text("📄", fontSize = 64.sp)
+        Text("🏍️", fontSize = 64.sp)
         Spacer(modifier = Modifier.height(16.dp))
+        Text("No hay moto registrada", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A237E))
         Text(
-            "Sin motocicleta",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF1A237E)
-        )
-        Text(
-            "Debes registrar una moto para ver el estado de sus documentos.",
+            "Debes registrar una motocicleta para gestionar sus documentos y mantenimientos.",
             textAlign = TextAlign.Center,
             color = Color.Gray,
             modifier = Modifier.padding(vertical = 8.dp)
@@ -258,50 +235,30 @@ fun EmptyDocumentsState(navController: NavController) {
 }
 
 @Composable
-fun DocumentsContent(uiState: com.example.proyecto_final.viewmodel.DocumentsUiState) {
+fun UnifiedContent(items: List<UnifiedItem>) {
     Column(
         modifier = Modifier
             .padding(16.dp)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        if (uiState.documents.isEmpty()) {
+        if (items.isEmpty()) {
             Text(
-                "No hay documentos registrados para esta moto.",
+                text = stringResource(R.string.empty_documents_list),
                 modifier = Modifier.fillMaxWidth().padding(top = 32.dp),
                 textAlign = TextAlign.Center,
                 color = Color.Gray
             )
         } else {
-            uiState.documents.forEach { doc ->
-                DetailedDocumentCard(
-                    title = doc.type,
-                    subtitle = if (doc.type == "SOAT") "Seguro Obligatorio" else "Certificado RTM",
-                    status = doc.status,
-                    statusColor = if (doc.status == "Vigente") Color(0xFF4CAF50) else Color(0xFFFFA000),
-                    emissionDate = doc.emissionDate.ifBlank { "--" },
-                    expiryDate = doc.expiryDate,
-                    remainingDays = "Verificar fecha",
-                    progress = 0.5f,
-                    entity = doc.entity.ifBlank { "No especificada" }
-                )
+            items.forEach { item ->
+                UnifiedItemCard(item)
             }
         }
     }
 }
 
 @Composable
-private fun DetailedDocumentCard(
-    title: String,
-    subtitle: String,
-    status: String,
-    statusColor: Color,
-    emissionDate: String,
-    expiryDate: String,
-    remainingDays: String,
-    progress: Float,
-    entity: String
-) {
+fun UnifiedItemCard(item: UnifiedItem) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -317,23 +274,27 @@ private fun DetailedDocumentCard(
                     Box(
                         modifier = Modifier
                             .size(40.dp)
-                            .background(statusColor.copy(alpha = 0.1f), RoundedCornerShape(8.dp)),
+                            .background(item.status.color.copy(alpha = 0.1f), RoundedCornerShape(8.dp)),
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(Icons.Default.Info, contentDescription = null, tint = statusColor)
+                        Icon(
+                            imageVector = if (item.isMaintenance) Icons.Default.Build else Icons.Default.Info,
+                            contentDescription = null,
+                            tint = item.status.color
+                        )
                     }
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
-                        Text(title, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                        Text(subtitle, fontSize = 12.sp, color = Color.Gray)
+                        Text(item.title, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        Text(item.subtitle, fontSize = 12.sp, color = Color.Gray)
                     }
                 }
                 Surface(
-                    color = statusColor,
+                    color = item.status.color,
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Text(
-                        status,
+                        text = item.status.label,
                         color = Color.White,
                         fontSize = 10.sp,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
@@ -342,38 +303,28 @@ private fun DetailedDocumentCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text("Emisión", fontSize = 10.sp, color = Color.Gray)
-                    Text(emissionDate, fontSize = 12.sp, fontWeight = FontWeight.Medium)
-                }
-                Column(modifier = Modifier.weight(1f)) {
-                    Text("Vencimiento", fontSize = 10.sp, color = Color.Gray)
-                    Text(expiryDate, fontSize = 12.sp, fontWeight = FontWeight.Medium)
-                }
-            }
-
             Spacer(modifier = Modifier.height(16.dp))
 
-            Column {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text("Entidad", fontSize = 10.sp, color = Color.Gray)
-                    Text(entity, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Column {
+                    Text(
+                        text = if (item.isMaintenance) "Meta" else stringResource(R.string.label_expiry),
+                        fontSize = 10.sp,
+                        color = Color.Gray
+                    )
+                    Text(item.targetValue, fontSize = 12.sp, fontWeight = FontWeight.Medium)
                 }
-                Spacer(modifier = Modifier.height(8.dp))
-                LinearProgressIndicator(
-                    progress = { progress },
-                    modifier = Modifier.fillMaxWidth().height(8.dp),
-                    color = Color(0xFF1A237E),
-                    trackColor = Color(0xFFE0E0E0),
-                    strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
-                )
             }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            LinearProgressIndicator(
+                progress = { item.progress },
+                modifier = Modifier.fillMaxWidth().height(8.dp),
+                color = item.status.color,
+                trackColor = Color(0xFFE0E0E0),
+                strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
+            )
         }
     }
 }

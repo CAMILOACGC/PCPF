@@ -64,4 +64,55 @@
     <string name="label_alerts">Alerts</string>
     <string name="unit_km">km</string>
 
+    <!-- Maintenance Screen (Used in Documents Screen now) -->
+    <string name="maintenance_title">Maintenance</string>
+    <string name="maintenance_subtitle">Schedule and record services</string>
+    <string name="empty_maintenance_title">No motorcycle registered</string>
+    <string name="empty_maintenance_subtitle">You must register a motorcycle to manage its maintenance.</string>
+    <string name="tab_scheduled">Scheduled</string>
+    <string name="tab_history">History</string>
+    <string name="empty_maintenance_list">No records yet.</string>
+    <string name="status_service_done">Service performed</string>
+    <string name="status_service_pending">Service pending</string>
+    <string name="label_mileage_short">Mileage:</string>
+    <string name="label_date_short">Date:</string>
+    <string name="status_completed">Completed</string>
+    <string name="status_pending">Pending</string>
+
+    <!-- Documents Screen -->
+    <string name="documents_mgmt_title">Management Central</string>
+    <string name="documents_mgmt_subtitle">Documents and services</string>
+    <string name="add_button_desc">Add</string>
+    <string name="empty_documents_title">No motorcycle</string>
+    <string name="empty_documents_subtitle">You must register a moto to see the status of its documents.</string>
+    <string name="empty_documents_list">No documents registered for this moto.</string>
+    <string name="sheet_selection_title">What do you want to add?</string>
+    <string name="option_new_document">New Document (SOAT, RTM…)</string>
+    <string name="option_new_maintenance">New Maintenance</string>
+    <string name="form_add_document_title">Add Document</string>
+    <string name="label_type_soat">Type (e.g., SOAT)</string>
+    <string name="label_expiry_date">Expiry (DD/MM/YYYY)</string>
+    <string name="label_issuing_entity">Issuing entity</string>
+    <string name="button_save_document">Save Document</string>
+    <string name="form_schedule_maint_title">Schedule Maintenance</string>
+    <string name="label_desc_maint">Description (e.g., Oil change)</string>
+    <string name="label_scheduling_type">Scheduling type:</string>
+    <string name="option_by_mileage">By Mileage</string>
+    <string name="option_by_date">By Date</string>
+    <string name="label_target_mileage">Target mileage</string>
+    <string name="button_schedule_service">Schedule Service</string>
+    <string name="label_emission">Emission</string>
+    <string name="label_expiry">Expiry</string>
+    <string name="label_entity">Entity</string>
+    <string name="doc_subtitle_soat">Mandatory Insurance</string>
+    <string name="doc_subtitle_rtm">RTM Certificate</string>
+    <string name="entity_not_specified">Not specified</string>
+    <string name="verify_date">Verify date</string>
+
+    <!-- Notifications -->
+    <string name="notif_speed_title">Speed Alert</string>
+    <string name="notif_speed_body">You exceeded 50 km/h. Please drive carefully.</string>
+    <string name="notif_maint_overdue">Maintenance Due</string>
+    <string name="notif_maint_upcoming">Upcoming Maintenance</string>
+
 </resources>

@@ -14,19 +14,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.proyecto_final.R
-import com.example.proyecto_final.ui.theme.PROYECTO_FINALTheme
 import com.example.proyecto_final.viewmodel.DashboardViewModel
+import com.example.proyecto_final.viewmodel.UnifiedItem
 
 @Composable
 fun DashboardScreen(navController: NavController, viewModel: DashboardViewModel = viewModel()) {
@@ -115,8 +112,8 @@ fun DashboardContent(navController: NavController, uiState: com.example.proyecto
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             MileageCard(uiState.motorcycle?.currentMileage?.toString() ?: "0")
-            MaintenanceCard(uiState.oilChangeRemaining, uiState.generalCheckRemaining)
-            DocumentsCard(uiState.soatStatus, uiState.rtmStatus)
+            
+            SummaryStatusCard(uiState.topItems)
             
             Button(
                 onClick = { navController.navigate(Screen.GPS.route) },
@@ -129,24 +126,6 @@ fun DashboardContent(navController: NavController, uiState: com.example.proyecto
                 Icon(Icons.Default.LocationOn, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(stringResource(R.string.button_start_gps))
-            }
-            
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                SmallStatusCard(
-                    title = stringResource(R.string.label_last_service),
-                    value = uiState.lastServiceDays,
-                    icon = Icons.Default.Build,
-                    modifier = Modifier.weight(1f)
-                )
-                SmallStatusCard(
-                    title = stringResource(R.string.label_alerts),
-                    value = uiState.pendingAlerts,
-                    icon = Icons.Default.Notifications,
-                    modifier = Modifier.weight(1f)
-                )
             }
         }
     }
@@ -208,7 +187,7 @@ fun MileageCard(mileage: String) {
 }
 
 @Composable
-fun MaintenanceCard(oil: String, check: String) {
+fun SummaryStatusCard(items: List<UnifiedItem>) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -216,84 +195,37 @@ fun MaintenanceCard(oil: String, check: String) {
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Build, contentDescription = null, tint = Color(0xFF2196F3))
+                Icon(Icons.Default.Notifications, contentDescription = null, tint = Color(0xFFFFA000))
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(stringResource(R.string.next_maintenance_title), color = Color.Gray, fontWeight = FontWeight.Medium)
+                Text("Estado de Documentos y Alertas", color = Color.Gray, fontWeight = FontWeight.Medium)
             }
             Spacer(modifier = Modifier.height(16.dp))
-            MaintenanceRow(stringResource(R.string.maintenance_oil_change), oil, Color(0xFF2196F3))
-            MaintenanceRow(stringResource(R.string.maintenance_general_check), check, Color(0xFF2196F3))
+            
+            if (items.isEmpty()) {
+                Text("Todo al día", color = Color.Gray, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+            } else {
+                items.forEach { item ->
+                    DashboardItemRow(item)
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            }
         }
     }
 }
 
 @Composable
-fun MaintenanceRow(label: String, value: String, valueColor: Color) {
+fun DashboardItemRow(item: UnifiedItem) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(label, color = Color.Gray)
-        Text(value, color = valueColor, fontWeight = FontWeight.Bold)
-    }
-}
-
-@Composable
-fun DocumentsCard(soat: String, rtm: String) {
-    Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
-    ) {
-        Column(modifier = Modifier.padding(20.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Edit, contentDescription = null, tint = Color(0xFF4CAF50))
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(stringResource(R.string.document_status_title), color = Color.Gray, fontWeight = FontWeight.Medium)
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            DocumentRow("SOAT", soat, if (soat == "Vigente" || soat == "Valid") Color(0xFF4CAF50) else Color(0xFFFFA000))
-            DocumentRow(stringResource(R.string.label_tecno_expiry), rtm, if (rtm == "Vigente" || rtm == "Valid") Color(0xFF4CAF50) else Color(0xFFFFA000))
-        }
-    }
-}
-
-@Composable
-fun DocumentRow(label: String, status: String, statusColor: Color) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(modifier = Modifier.size(8.dp).background(statusColor, RoundedCornerShape(4.dp)))
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
+            Box(modifier = Modifier.size(8.dp).background(item.status.color, RoundedCornerShape(4.dp)))
             Spacer(modifier = Modifier.width(8.dp))
-            Text(label, color = Color.Gray)
+            Text(item.title, color = Color.Gray, maxLines = 1)
         }
-        Text(status, color = statusColor, fontWeight = FontWeight.Bold)
-    }
-}
-
-@Composable
-fun SmallStatusCard(title: String, value: String, icon: ImageVector, modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier,
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(icon, contentDescription = null, modifier = Modifier.size(16.dp), tint = Color(0xFF1A237E))
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(title, fontSize = 10.sp, color = Color.Gray)
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(value, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-        }
+        Text(item.status.label, color = item.status.color, fontWeight = FontWeight.Bold)
     }
 }
 
@@ -313,12 +245,6 @@ fun BottomNavigationBar(navController: NavController) {
             label = { Text(stringResource(R.string.nav_register)) },
             selected = currentRoute == Screen.RegisterMotorcycle.route,
             onClick = { navController.navigate(Screen.RegisterMotorcycle.route) }
-        )
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.Settings, contentDescription = null) },
-            label = { Text(stringResource(R.string.nav_maintenance)) },
-            selected = currentRoute == Screen.Maintenance.route,
-            onClick = { navController.navigate(Screen.Maintenance.route) }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Default.List, contentDescription = null) },

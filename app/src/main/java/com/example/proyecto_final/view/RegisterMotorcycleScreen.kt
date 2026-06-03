@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.proyecto_final.R
 import com.example.proyecto_final.ui.theme.PROYECTO_FINALTheme
 import com.example.proyecto_final.viewmodel.RegisterMotorcycleViewModel
 
@@ -48,13 +50,13 @@ fun RegisterMotorcycleScreen(
             ) {
                 Column {
                     Text(
-                        text = "Registrar Motocicleta",
+                        text = stringResource(R.string.register_motorcycle_title),
                         color = Color.White,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Completa los datos de tu moto",
+                        text = stringResource(R.string.register_motorcycle_subtitle),
                         color = Color.White.copy(alpha = 0.7f),
                         fontSize = 12.sp
                     )
@@ -74,43 +76,43 @@ fun RegisterMotorcycleScreen(
                 ) {
                     Column(modifier = Modifier.padding(20.dp)) {
                         Text(
-                            "Información del Vehículo",
+                            text = stringResource(R.string.vehicle_info_section),
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp,
                             modifier = Modifier.padding(bottom = 16.dp)
                         )
                         
                         InputField(
-                            label = "Marca", 
-                            placeholder = "Ej: Honda, Yamaha...",
+                            label = stringResource(R.string.label_brand), 
+                            placeholder = stringResource(R.string.placeholder_brand),
                             value = viewModel.brand,
                             onValueChange = { viewModel.brand = it }
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         InputField(
-                            label = "Modelo", 
-                            placeholder = "Ej: CB500F, MT-03...",
+                            label = stringResource(R.string.label_model), 
+                            placeholder = stringResource(R.string.placeholder_model),
                             value = viewModel.model,
                             onValueChange = { viewModel.model = it }
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         InputField(
-                            label = "Año", 
-                            placeholder = "Ej: 2022",
+                            label = stringResource(R.string.label_year), 
+                            placeholder = stringResource(R.string.placeholder_year),
                             value = viewModel.year,
                             onValueChange = { viewModel.year = it }
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         InputField(
-                            label = "Placa", 
-                            placeholder = "Ej: ABC12D",
+                            label = stringResource(R.string.label_plate), 
+                            placeholder = stringResource(R.string.placeholder_plate),
                             value = viewModel.plate,
                             onValueChange = { viewModel.plate = it }
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         InputField(
-                            label = "Kilometraje Actual", 
-                            placeholder = "Ej: 15000", 
+                            label = stringResource(R.string.label_mileage), 
+                            placeholder = stringResource(R.string.placeholder_mileage), 
                             suffix = "km",
                             value = viewModel.mileage,
                             onValueChange = { viewModel.mileage = it }
@@ -118,22 +120,22 @@ fun RegisterMotorcycleScreen(
 
                         Spacer(modifier = Modifier.height(24.dp))
                         Text(
-                            "Documentos Obligatorios",
+                            text = stringResource(R.string.mandatory_docs_section),
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp,
                             modifier = Modifier.padding(bottom = 16.dp)
                         )
 
                         InputField(
-                            label = "Vencimiento SOAT", 
-                            placeholder = "DD/MM/AAAA",
+                            label = stringResource(R.string.label_soat_expiry), 
+                            placeholder = stringResource(R.string.placeholder_date),
                             value = viewModel.soatExpiry,
                             onValueChange = { viewModel.soatExpiry = it }
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         InputField(
-                            label = "Vencimiento Técnico-Mecánica", 
-                            placeholder = "DD/MM/AAAA",
+                            label = stringResource(R.string.label_tecno_expiry), 
+                            placeholder = stringResource(R.string.placeholder_date),
                             value = viewModel.tecnoExpiry,
                             onValueChange = { viewModel.tecnoExpiry = it }
                         )
@@ -152,8 +154,8 @@ fun RegisterMotorcycleScreen(
                         Button(
                             onClick = { 
                                 viewModel.registerMotorcycle {
-                                    navController.navigate(Screen.Dashboard.route) {
-                                        popUpTo(Screen.RegisterMotorcycle.route) { inclusive = true }
+                                    navController.navigate("dashboard") { // Corregido el nombre de la ruta si es necesario
+                                        popUpTo("register_motorcycle") { inclusive = true }
                                     }
                                 }
                             },
@@ -167,7 +169,7 @@ fun RegisterMotorcycleScreen(
                             } else {
                                 Icon(Icons.Default.Add, contentDescription = null)
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text("Guardar Motocicleta")
+                                Text(stringResource(R.string.button_save_motorcycle))
                             }
                         }
                     }
@@ -185,7 +187,7 @@ fun RegisterMotorcycleScreen(
                         Icon(Icons.Default.Info, contentDescription = null, tint = Color(0xFF2196F3), modifier = Modifier.size(20.dp))
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            "Tip: Mantén actualizado el kilometraje para recibir alertas precisas de mantenimiento.",
+                            text = stringResource(R.string.tip_mileage),
                             fontSize = 12.sp,
                             color = Color(0xFF1976D2)
                         )

@@ -1,0 +1,67 @@
+<resources>
+    <string name="app_name">Moto Care</string>
+
+    <!-- Navegación -->
+    <string name="nav_gps">GPS</string>
+    <string name="nav_dashboard">Panel</string>
+    <string name="nav_maintenance">Mantenimiento</string>
+    <string name="nav_home">Inicio</string>
+    <string name="nav_register">Registrar</string>
+    <string name="nav_documents">Documentos</string>
+
+    <!-- Pantalla de Inicio de Sesión -->
+    <string name="login_welcome">Bienvenido a Moto Care</string>
+    <string name="login_subtitle">Gestiona tu motocicleta de forma inteligente</string>
+    <string name="login_button_google">Continuar con Google</string>
+    <string name="login_footer">Solo necesitas tu cuenta de Google para ingresar</string>
+
+    <!-- Pantalla de Registro de Moto -->
+    <string name="register_motorcycle_title">Registrar Motocicleta</string>
+    <string name="register_motorcycle_subtitle">Completa los datos de tu moto</string>
+    <string name="vehicle_info_section">Información del Vehículo</string>
+    <string name="label_brand">Marca</string>
+    <string name="placeholder_brand">Ej: Honda, Yamaha…</string>
+    <string name="label_model">Modelo</string>
+    <string name="placeholder_model">Ej: CB500F, MT-03…</string>
+    <string name="label_year">Año</string>
+    <string name="placeholder_year">Ej: 2022</string>
+    <string name="label_plate">Placa</string>
+    <string name="placeholder_plate">Ej: ABC12D</string>
+    <string name="label_mileage">Kilometraje Actual</string>
+    <string name="placeholder_mileage">Ej: 15000</string>
+    <string name="mandatory_docs_section">Documentos Obligatorios</string>
+    <string name="label_soat_expiry">Vencimiento SOAT</string>
+    <string name="placeholder_date">DD/MM/AAAA</string>
+    <string name="label_tecno_expiry">Vencimiento Técnico-Mecánica</string>
+    <string name="button_save_motorcycle">Guardar Motocicleta</string>
+    <string name="tip_mileage">Tip: Mantén actualizado el kilometraje para recibir alertas precisas de mantenimiento.</string>
+
+    <!-- Pantalla GPS -->
+    <string name="gps_title">Recorrido GPS</string>
+    <string name="gps_subtitle">Rastrea tu viaje en tiempo real</string>
+    <string name="status_tracking">● En curso</string>
+    <string name="status_stopped">● Detenido</string>
+    <string name="unit_max_speed">km/h Máx</string>
+    <string name="unit_total_distance">km Total</string>
+    <string name="unit_time">Tiempo</string>
+    <string name="button_stop_tracking">Detener Recorrido</string>
+    <string name="button_start_tracking">Iniciar Recorrido</string>
+    <string name="marker_my_location">Mi Ubicación</string>
+    <string name="marker_speed_snippet">Velocidad Actual: %s km/h</string>
+
+    <!-- Pantalla Dashboard -->
+    <string name="empty_dashboard_title">No tienes motocicletas registradas</string>
+    <string name="empty_dashboard_subtitle">Registra tu primera moto para empezar a trackear tus mantenimientos y recorridos.</string>
+    <string name="default_moto_title">Mi Motocicleta</string>
+    <string name="maintenance_oil_change">Cambio de aceite</string>
+    <string name="maintenance_general_check">Revisión general</string>
+    <string name="next_maintenance_title">Próximo Mantenimiento</string>
+    <string name="document_status_title">Estado de Documentos</string>
+    <string name="status_valid">Vigente</string>
+    <string name="status_expired">Vencido</string>
+    <string name="button_start_gps">Iniciar Recorrido GPS</string>
+    <string name="label_last_service">Último servicio</string>
+    <string name="label_alerts">Alertas</string>
+    <string name="unit_km">km</string>
+
+</resources>

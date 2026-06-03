@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">MotoTrack</string>
 
-    <!-- Navegación -->
+
     <string name="nav_gps">GPS</string>
     <string name="nav_dashboard">Panel</string>
     <string name="nav_maintenance">Mantenimiento</string>

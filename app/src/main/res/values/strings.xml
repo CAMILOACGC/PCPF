@@ -1,3 +1,67 @@
 <resources>
-    <string name="app_name">PROYECTO_FINAL</string>
+    <string name="app_name">Moto Care</string>
+
+    <!-- Navigation -->
+    <string name="nav_gps">GPS</string>
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_maintenance">Maintenance</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_register">Register</string>
+    <string name="nav_documents">Documents</string>
+
+    <!-- Login Screen -->
+    <string name="login_welcome">Welcome to Moto Care</string>
+    <string name="login_subtitle">Manage your motorcycle intelligently</string>
+    <string name="login_button_google">Continue with Google</string>
+    <string name="login_footer">You only need your Google account to log in</string>
+
+    <!-- Register Motorcycle Screen -->
+    <string name="register_motorcycle_title">Register Motorcycle</string>
+    <string name="register_motorcycle_subtitle">Complete your motorcycle details</string>
+    <string name="vehicle_info_section">Vehicle Information</string>
+    <string name="label_brand">Brand</string>
+    <string name="placeholder_brand">e.g., Honda, Yamaha…</string>
+    <string name="label_model">Model</string>
+    <string name="placeholder_model">e.g., CB500F, MT-03…</string>
+    <string name="label_year">Year</string>
+    <string name="placeholder_year">e.g., 2022</string>
+    <string name="label_plate">License Plate</string>
+    <string name="placeholder_plate">e.g., ABC12D</string>
+    <string name="label_mileage">Current Mileage</string>
+    <string name="placeholder_mileage">e.g., 15000</string>
+    <string name="mandatory_docs_section">Mandatory Documents</string>
+    <string name="label_soat_expiry">SOAT Expiry</string>
+    <string name="placeholder_date">DD/MM/YYYY</string>
+    <string name="label_tecno_expiry">Technical-Mechanical Expiry</string>
+    <string name="button_save_motorcycle">Save Motorcycle</string>
+    <string name="tip_mileage">Tip: Keep mileage updated to receive precise maintenance alerts.</string>
+
+    <!-- GPS Screen -->
+    <string name="gps_title">GPS Route</string>
+    <string name="gps_subtitle">Track your trip in real time</string>
+    <string name="status_tracking">● In progress</string>
+    <string name="status_stopped">● Stopped</string>
+    <string name="unit_max_speed">km/h Max</string>
+    <string name="unit_total_distance">km Total</string>
+    <string name="unit_time">Time</string>
+    <string name="button_stop_tracking">Stop Tracking</string>
+    <string name="button_start_tracking">Start Tracking</string>
+    <string name="marker_my_location">My Location</string>
+    <string name="marker_speed_snippet">Current Speed: %s km/h</string>
+
+    <!-- Dashboard Screen -->
+    <string name="empty_dashboard_title">No motorcycles registered</string>
+    <string name="empty_dashboard_subtitle">Register your first motorcycle to start tracking your maintenance and trips.</string>
+    <string name="default_moto_title">My Motorcycle</string>
+    <string name="maintenance_oil_change">Oil change</string>
+    <string name="maintenance_general_check">General check</string>
+    <string name="next_maintenance_title">Next Maintenance</string>
+    <string name="document_status_title">Document Status</string>
+    <string name="status_valid">Valid</string>
+    <string name="status_expired">Expired</string>
+    <string name="button_start_gps">Start GPS Route</string>
+    <string name="label_last_service">Last service</string>
+    <string name="label_alerts">Alerts</string>
+    <string name="unit_km">km</string>
+
 </resources>
